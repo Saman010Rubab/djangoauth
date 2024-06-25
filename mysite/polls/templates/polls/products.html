@@ -1,29 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products</title>
-</head>
-<body>
-    <h1>All Products</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>name</th>
-                <th>Image</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in products %}
-            <tr>
-                <td>{{ product.name}}</td>
-                <td><img src="/media/{{ product.image}}"></td>
 
-            </tr>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Products</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+    <a href="{% url "polls:logout" %}"><button type="button" class="btn btn-outline-primary float-end w-10">Log Out</button></a>
+    <div class="container-fluid bg-dark d-flex flex-column justify-content-center" style="height: 100vh;">
+        
+        <h1 class="text-white text-center">All Products</h1>
+
+        <div class="row  d-flex flex-row p-5 justify-content-evenly align-item-center" style="height: 80%;">
+            {% for product in products %}
+            <div class="col-sm-4  col-md-3 p-3 border border-dark text-white  d-flex flex-column  align-items-center"
+                style="height: 40%;">
+                <img src="/media/{{ product.image}}" class="rounded-4" style="height: 80%; width: 80%;">
+                <p>{{ product.name}}</p>
+            </div>
             {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'polls:add_product' %}">Add Product</a>
+            <a href="{% url 'polls:add_product' %}">Add Product</a>
+        </div>
+
+
+    </div>
+
 </body>
+
 </html>
