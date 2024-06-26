@@ -5,83 +5,89 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
-
-
+from django.views import generic
+from django.views import View 
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Product
 
 
-def index(request):
-    return render(request, "polls/signin.html")
-
-
-def signup(request):
-    if request.method== 'POST':
-        data = request.POST
-        if not data['username'] or not data['email'] or not data['password']:
-            return render(request, "polls/signup.html", {
-                "error": "Please enter all required fields.",
-            })
-        u = User.objects.create_user(
-            username=data['username'] ,
-            email=data['email'],
-            password=data['password'],
-        )
-        u.save()
-        return render(request, "polls/signin.html")
-    else:  
-        return render(request, "polls/signup.html")
-
-    
-
-def signin(request):
-    if request.method == 'POST': 
-        data = request.POST
-        if not data['username'] or not data['password']:
-            return render(request, "polls/signin.html", {
-                "error": "Please enter all required fields.",
-            })
-        user = authenticate(request, username=data['username'], password=data['password'])
-
-        if user:
-            login(request, user)
-            return HttpResponseRedirect(reverse("polls:products"))
-        else:
-            return render(request, "polls/signin.html", {
-                "error": "Wrong username/password",
-            })
-    else:  
+class signup(View):
+    template_name= "polls/signup.html"
+    def get(self, request):
+        return render(request, self.template_name)
+    def post(self, request):
+        if request.method== 'POST':
+            data = request.POST
+            if not data['username'] or not data['email'] or not data['password']:
+                return render(request, "polls/signup.html", {
+                    "error": "Please enter all required fields.",
+                })
+            u = User.objects.create_user(
+                username=data['username'] ,
+                email=data['email'],
+                password=data['password'],
+            )
+            u.save()
+            return render(request, "polls/signin.html")
+        
+class signin(View):
+    template_name = "polls/signin.html"
+    def get(self, request):
         return render(request, "polls/signin.html")
 
-@login_required(login_url="/polls/signin")
+    def post(self, request):
+        if request.method == 'POST': 
+            data = request.POST
+            if not data['username'] or not data['password']:
+                return render(request, "polls/signin.html", {
+                    "error": "Please enter all required fields.",
+                })
+            user = authenticate(request, username=data['username'], password=data['password'])
+            if user:
+                login(request, user)
+                return HttpResponseRedirect(reverse("polls:products"))
+            else:
+                return render(request, "polls/signin.html", {
+                    "error": "Wrong username/password",
+                })
+
+       
+
+# @login_required(login_url="/polls/signin")
 def logout_user(request):
     username = request.user.username
     logout(request)
     return render(request, "polls/signin.html")
 
-@login_required(login_url="/polls/signin")
-def products(request):
-    products= Product.objects.all()
-    return render(request, "polls/products.html" , {"products": products})
+class ProductsView( generic.ListView):
+    
+    template_name = "polls/products.html"
+    context_object_name = "products"
+    
+    def get_queryset(self):
+        return Product.objects.all()
+
+class addproduct(View):
+    template_name= "polls/addproduct.html"
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        try:
+            if not request.POST['p_name'] or not request.FILES['p_img']:
+                raise KeyError
+        except(KeyError):
+            return render(request,
+                "polls/addproduct.html", 
+                {"error":"something went wrong!"})
+        else:
+            data = request.POST['p_name']
+            files = request.FILES['p_img']
+            product = Product(name=data, image=files)
+            product.save()
+            return HttpResponseRedirect(reverse("polls:products"))
 
 
-@login_required(login_url="/polls/signin")
-def addproduct(request):
-    return render(request, "polls/addproduct.html")
-
-@login_required(login_url="/polls/signin")
-def newproduct(request):
-    data = request.POST['p_name']
-    files = request.FILES['p_img']
-    try:
-        if not data or not files:
-            raise KeyError
-    except(KeyError):
-        return render(request,
-            "polls/addproduct.html", 
-            {"error":"something went wrong!"})
-    else:
-        product = Product(name=data, image=files)
-        product.save()
-        return HttpResponseRedirect(reverse("polls:index"))
     
