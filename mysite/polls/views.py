@@ -7,12 +7,17 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Product
 from .serializers import UserSerializer, ProductSerializer
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.views import generic, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+from django.shortcuts import get_object_or_404, render, redirect
+from .models import Product
+from .forms import ProductForm
 
 
 class UserView(generics.ListAPIView):
@@ -157,4 +162,23 @@ class addproduct(LoginRequiredMixin,View):
             return HttpResponseRedirect(reverse("polls:products"))
 
 
-    
+class edit_view(LoginRequiredMixin, View):
+    login_url = "/signin"
+    template_name= "polls/edit_product.html"
+    form_class = ProductForm
+    success_url = 'polls:products'
+
+
+    def get(self, request, pk):
+        instance = get_object_or_404(Product, pk=pk)
+        form = self.form_class(instance=instance)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, pk):
+        instance = get_object_or_404(Product, pk=pk)
+        form = ProductForm(request.POST or None, instance=instance)
+        if form.is_valid():
+            form.save()
+            return redirect(self.success_url)# Replace with your success URL
+
+        return render(request, self.template_name, {'form': form})   

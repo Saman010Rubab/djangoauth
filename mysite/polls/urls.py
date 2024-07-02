@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 # from rest_framework.routers import DefaultRouter
 from .views import SignupView, SigninView, LogoutView, ProductListView, ProductDetailView, UserView
 from . import views
@@ -28,6 +28,11 @@ urlpatterns = [
     path("logout/", views.logout_user, name="logout"),
     path("products/", views.ProductsView.as_view(), name="products"),
     path("addproduct/", views.addproduct.as_view(), name="add_product"),
+    path("edit/<int:pk>/", views.edit_view.as_view(), name="edit"),
+    # path("details/<int:pk>/", views.details_view, name="details"),
+    # path("edit/", views.edit_view, name="edit"),
+
+
 ]
 
 # from django.urls import path

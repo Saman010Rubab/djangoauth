@@ -10,18 +10,22 @@
 </head>
 
 <body>
-    <a href="{% url "polls:logout" %}"><button type="button" class="btn btn-outline-primary float-end w-10">Log Out</button></a>
+    <a href="{% url 'polls:logout' %}"><button type="button" class="btn btn-outline-primary float-end w-10">Log
+            Out</button></a>
     <div class="container-fluid bg-dark d-flex flex-column justify-content-center" style="height: 100vh;">
-        
+
         <h1 class="text-white text-center">All Products</h1>
 
         <div class="row  d-flex flex-row p-5 justify-content-evenly align-item-center" style="height: 80%;">
             {% for product in products %}
-            <div class="col-sm-4  col-md-3 p-3 border border-dark text-white  d-flex flex-column  align-items-center"
-                style="height: 40%;">
-                <img src="/media/{{ product.image}}" class="rounded-4" style="height: 80%; width: 80%;">
-                <p>{{ product.name}}</p>
-            </div>
+            <a href="{% url 'polls:edit' product.id %}"  class="col-sm-4  col-md-3 p-3 w-40 border border-dark text-white  d-flex flex-column  align-items-center"
+            style="height: 40%;">
+                <div  class="col-sm-4  col-md-3 p-3 border border-dark text-white w-100 d-flex flex-column  align-items-center"
+                style="height: 100%;">
+                    <img src="/media/{{ product.image}}" class="rounded-4" style="height: 80%; width: 80%;">
+                    <p>{{ product.name}}</p>
+                </div>
+            </a>
             {% endfor %}
             <a href="{% url 'polls:add_product' %}">Add Product</a>
         </div>

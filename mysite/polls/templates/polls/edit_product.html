@@ -1,3 +1,10 @@
+<!-- edit_template.html -->
+{% comment %} <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+</form> {% endcomment %}
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -11,7 +18,14 @@
         <div class="col-8 bg-info p-5 m-5 rounded">
             <p><a href="{% url "polls:products"%}" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Back</a>
             <h1 class="text-dark">Add Product</h1>
-            <form class="text-white" action="{% url "polls:add_product" %}" method="put" enctype="multipart/form-data">
+
+            <form method="put">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Update</button>
+            </form>
+            
+            {% comment %} <form class="text-white" action="{% url "polls:add_product" %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="productname" class="form-label">Name</label>
@@ -23,12 +37,13 @@
                   </div>
                   {% if error %}<p style="color:red"><strong>{{error }}</strong></p>{% endif %}
                   <button type="submit" class="btn btn-outline-primary">Add</button>
-            </form>
+            </form> {% endcomment %}
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>
 </html>
+
 
 
 
