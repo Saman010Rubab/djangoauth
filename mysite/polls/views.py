@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.views import generic
 from django.views import View 
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.core.paginator import Paginator
 from .models import Product
 
 
@@ -54,21 +54,22 @@ class signin(View):
 
        
 
-# @login_required(login_url="/polls/signin")
+@login_required(login_url="/polls/")
 def logout_user(request):
     username = request.user.username
     logout(request)
     return render(request, "polls/signin.html")
 
-class ProductsView( generic.ListView):
-    
+class ProductsView( LoginRequiredMixin, generic.ListView):
+    login_url="/polls/"
     template_name = "polls/products.html"
     context_object_name = "products"
-    
+    paginate_by = 6
     def get_queryset(self):
         return Product.objects.all()
 
-class addproduct(View):
+class addproduct(LoginRequiredMixin,View):
+    login_url="/polls/"
     template_name= "polls/addproduct.html"
 
     def get(self, request):
